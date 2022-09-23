@@ -1,12 +1,13 @@
 FROM golang:1.19-alpine AS builder
 
-RUN apk add --no-cache git git-lfs ca-certificates
+RUN apk add --no-cache git ca-certificates
 
 WORKDIR /build
 
 RUN set -ex && \
 	cd /build && \
 	git clone https://github.com/tom-snow/docker-ComWechat.git dc && \
+	wget -q "https://github.com/tom-snow/docker-ComWechat/releases/download/v0.2_wc3.7.0.30/Tencent.zip" -O dc/wine/Tencent.zip && \
 	git clone https://github.com/duo/matrix-wechat-agent.git agent && \
 	cd agent && \
 	mkdir matrix-wechat-agent && \

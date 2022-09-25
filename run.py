@@ -29,6 +29,11 @@ class AgentManager:
                 os.kill(self.vnc.pid, signal.SIGTERM)
         except Exception as e:
             logger.error('Error at stop vnc', exc_info=e)
+        try:
+            subprocess.run(['sudo', 'rm', '-f', '/tmp/.X5-lock'])
+            subprocess.run(['sudo', 'rm', '-f', '/tmp/.X11-unix/X5'])
+        except Exception as e:
+            logger.error('Error at cleanup X', exc_info=e)
 
     def init(self):
         if not os.path.exists("/home/user/matrix-wechat-agent/matrix-wechat-agent.exe"):

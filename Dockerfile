@@ -1,6 +1,6 @@
 FROM golang:1.19-alpine AS builder
 
-RUN apk add --no-cache git ca-certificates
+RUN apk add --no-cache git ca-certificates curl
 
 WORKDIR /build
 
@@ -8,12 +8,15 @@ RUN set -ex && \
 	cd /build && \
 	git clone https://github.com/tom-snow/docker-ComWechat.git dc && \
 	wget -q "https://github.com/tom-snow/docker-ComWechat/releases/download/v0.2_wc3.7.0.30/Tencent.zip" -O dc/wine/Tencent.zip && \
+	URL=$(curl -s https://api.github.com/repos/ljc545w/ComWeChatRobot/releases/latest | grep "browser_download_url.*zip" | cut -d : -f 2,3 | tr -d \") && \
+	wget -q $URL && \
+	unzip -qq *.zip && \
 	git clone https://github.com/duo/matrix-wechat-agent.git agent && \
 	cd agent && \
 	mkdir matrix-wechat-agent && \
 	GOOS=windows GOARCH=386 go build -o matrix-wechat-agent/matrix-wechat-agent.exe main.go && \
-	wget -q https://github.com/ljc545w/ComWeChatRobot/raw/master/Release/socket/SWeChatRobot.dll -O matrix-wechat-agent/SWeChatRobot.dll && \
-	wget -q https://github.com/ljc545w/ComWeChatRobot/raw/master/Release/socket/wxDriver.dll -O matrix-wechat-agent/wxDriver.dll && \
+	cp ../http/SWeChatRobot.dll matrix-wechat-agent/SWeChatRobot.dll && \
+	cp ../http/wxDriver.dll matrix-wechat-agent/wxDriver.dll && \
 	tar -czf matrix.tar.gz matrix-wechat-agent && \
 	echo 'build done'
 

@@ -36,10 +36,9 @@ class AgentManager:
             logger.error('Error at cleanup X', exc_info=e)
 
     def init(self):
-        if not os.path.exists("/home/user/matrix-wechat-agent/matrix-wechat-agent.exe"):
-            logger.info("Extract matrix-wechat-agent...")
-            subprocess.run(
-                ['sudo', 'tar', '-zxf', '/matrix.tar.gz', '-C', '/home/user/'])
+        logger.info("Initialize agent...")
+        if subprocess.run(['/usr/bin/init-agent.sh']).returncode != 0:
+            raise Exception('Failed to initialize agent...')
 
     def start_vnc(self):
         logger.info("Start vnc...")
